@@ -6,10 +6,10 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.aplicacionfinal.models.Movie
-import com.example.aplicacionfinal.services.IMovieService
+import com.example.aplicacionfinal.clients.IMovieClient
+import com.example.aplicacionfinal.services.MoviesService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,6 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var movie: Movie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,20 +32,12 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        try {
-            var servicio = InicializarMovieService()
-            var call = servicio.details()
-            call.enqueue(object: Callback<Movie> {
-                override fun onResponse(call: Call<Movie>?, response: Response<Movie>?) {
+        var service = MoviesService()
+        service.getDetails(::setMovie)
+    }
 
-                }
-                override fun onFailure(call: Call<Movie>?, t: Throwable?) {
-                }
-            })
-        }
-        catch (ex: Exception){
-            Log.e("excepcion", ex.message.toString())
-        }
+    fun setMovie(movie: Movie){
+        this.movie = movie;
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -62,24 +56,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun InicializarMovieService(): IMovieService{
-        val API_BASE_URL = "https://api.themoviedb.org/"
-
-        val httpClient = OkHttpClient.Builder()
-
-        val builder = Retrofit.Builder()
-            .baseUrl(API_BASE_URL)
-            .addConverterFactory(
-                GsonConverterFactory.create()
-            )
-
-        val retrofit = builder
-            .client(
-                httpClient.build()
-            )
-            .build()
-
-        val client: IMovieService = retrofit.create(IMovieService::class.java)
-        return client;
-    }
 }
