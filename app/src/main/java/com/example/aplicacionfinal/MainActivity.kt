@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.aplicacionfinal.models.Movie
 import com.example.aplicacionfinal.clients.IMovieClient
+import com.example.aplicacionfinal.models.MovieList
 import com.example.aplicacionfinal.services.MoviesService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -20,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var movieList: MovieList
     private lateinit var movie: Movie
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,11 +35,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         var service = MoviesService()
-        service.getDetails(::setMovie)
+        service.getSearch(::setMovieList,"fight")
+        //service.getDetails(::setMovie,550)
+        //service.getDetails(::setMovie,5)
+        //service.getPopularDetails(::setMovieList)
     }
 
     fun setMovie(movie: Movie){
         this.movie = movie;
+    }
+
+    fun setMovieList(movieList: MovieList){
+        this.movieList = movieList;
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
